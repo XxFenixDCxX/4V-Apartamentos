@@ -1,6 +1,10 @@
 <!-- app.component.html -->
-<app-menu></app-menu>
-<div class="container mt-5">
-  <router-outlet></router-outlet>
+<div class="d-flex flex-column min-vh-100">
+  <div>
+    <app-menu></app-menu>
+    <div class="container mt-5">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <app-footer class="mt-auto"></app-footer>
 </div>
-<app-footer></app-footer>
