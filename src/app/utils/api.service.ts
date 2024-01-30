@@ -15,7 +15,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   obtenerReservas(): Observable<Reserva[]> {
-    return this.http.get<Reserva[]>(`${this.apiUrl}/reserva`).pipe(
+    return this.http.get<Reserva[]>(`${this.apiUrl}/reservas`).pipe(
       map((reservasAPI: any[]) => {
         return reservasAPI.map(reserva => new Reserva(
           reserva.id,
@@ -54,4 +54,7 @@ export class ApiService {
     );
   }
 
+  crearReserva(reserva: Reserva): Observable<Reserva> {
+    return this.http.post<Reserva>(`${this.apiUrl}/reservas`, reserva);
+  }
 }

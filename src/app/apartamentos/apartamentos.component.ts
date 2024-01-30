@@ -6,6 +6,8 @@ import { NgbAlertModule, NgbDatepickerModule, NgbDateStruct, NgbCarouselModule }
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
 import { Reserva } from '../class/reserva';
+import { ReservaFormComponent } from '../reserva-form/reserva-form.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-apartamentos',
@@ -20,6 +22,14 @@ export class ApartamentosComponent implements OnInit {
   apartamentos: Apartamento[] = [];
   filtroFecha: string | null = null;
   model: NgbDateStruct = this.obtenerFechaHoy();
+
+  abrirModalReserva(idApartamento: number) {
+    const modalRef = this.modalService.open(ReservaFormComponent);
+    modalRef.componentInstance.idApartamento = idApartamento;
+    modalRef.componentInstance.reservaRealizada.subscribe(() => {
+      this.filtrarApartamentos();
+    });
+  }
 
   obtenerFechaHoy(): NgbDateStruct {
     const hoy = new Date();
@@ -74,7 +84,7 @@ export class ApartamentosComponent implements OnInit {
     return new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
   }
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.apiService.obtenerApartamentos().subscribe(

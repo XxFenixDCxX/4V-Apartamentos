@@ -35,7 +35,7 @@
           <!-- Verificación de reserva -->
           <div class="text-center">
             <button *ngIf="!apartamento.ultima_reserva || isDisponibleHoy(apartamento.ultima_reserva)"
-                    class="btn btn-primary mt-3">Reservar</button>
+                    class="btn btn-primary mt-3" (click)="abrirModalReserva(apartamento.id)">Reservar</button>
           </div>
 
           <!-- Fecha de salida o "Hasta" -->

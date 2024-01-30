@@ -1,1 +1,27 @@
-<p>reserva-form works!</p>
+<!-- reserva-form.component.html -->
+<div class="modal-header">
+  <h4 class="modal-title">Formulario de Reserva</h4>
+  <button type="button" class="close" aria-label="Close" (click)="modal.dismissAll()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="reservaForm">
+    <div class="form-group">
+      <label for="fechaEntrada">Fecha de Entrada:</label>
+      <input type="date" class="form-control" id="fechaEntrada" formControlName="fechaEntrada">
+    </div>
+    <div class="form-group">
+      <label for="fechaSalida">Fecha de Salida:</label>
+      <input type="date" class="form-control" id="fechaSalida" formControlName="fechaSalida">
+    </div>
+    <div class="form-group">
+      <label for="contacto">Contacto:</label>
+      <input type="email" class="form-control" id="contacto" formControlName="contacto">
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <!-- Pasa el ID del apartamento como argumento al método realizarReserva -->
+  <button type="button" class="btn btn-primary" (click)="realizarReserva()">Realizar Reserva</button>
+</div>
