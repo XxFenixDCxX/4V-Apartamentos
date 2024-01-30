@@ -1,38 +1,61 @@
-// reserva-form.component.ts
-import { ApiService } from './../utils/api.service';
-import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Reserva } from '../class/reserva';
-import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Component } from '@angular/core';
+import { Output, Input } from '@angular/core';
+import { EventEmitter } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root',
+})
+export class CustomValidators {
+  fechaEntradaPosterior(control: AbstractControl): { [key: string]: boolean } | null {
+    const fechaEntrada = new Date(control.value);
+    const hoy = new Date();
+
+    return fechaEntrada > hoy ? null : { 'fechaEntradaPosterior': true };
+  }
+
+  fechaSalidaPosterior(control: AbstractControl): { [key: string]: boolean } | null {
+    const fechaEntradaControl = control.get('fechaEntrada');
+    const fechaSalida = new Date(control.value);
+
+    if (fechaEntradaControl && fechaEntradaControl.value) {
+      const fechaEntrada = new Date(fechaEntradaControl.value);
+
+      return fechaSalida > fechaEntrada ? null : { 'fechaSalidaPosterior': true };
+    }
+
+    return null;
+  }
+
+}
 
 @Component({
   selector: 'app-reserva-form',
   templateUrl: './reserva-form.component.html',
   styleUrls: ['./reserva-form.component.scss'],
-  imports: [ReactiveFormsModule, HttpClientModule],
+  imports: [ReactiveFormsModule],
   standalone: true
 })
 export class ReservaFormComponent {
   @Output() reservaRealizada = new EventEmitter();
-  @Input() idApartamento: number = 0; // Agrega este input
+  @Input() idApartamento: number = 0;
 
   reservaForm: FormGroup;
   modal: NgbModal = new NgbModal;
 
-  constructor(private fb: FormBuilder, private apiService: ApiService) {
+  constructor(private fb: FormBuilder, private customValidators: CustomValidators) {
     this.reservaForm = this.fb.group({
-      fechaEntrada: ['', Validators.required],
-      fechaSalida: ['', Validators.required],
+      fechaEntrada: ['', [Validators.required, this.customValidators.fechaEntradaPosterior]],
+      fechaSalida: ['', [Validators.required, this.customValidators.fechaSalidaPosterior]],
       contacto: ['', Validators.required],
     });
   }
 
   realizarReserva() {
     if (this.reservaForm.valid) {
-      // Crear una instancia de Reserva con los datos del formulario
       const nuevaReserva: Reserva = {
         id: 1,
         apartmento_id: this.idApartamento,
@@ -40,25 +63,8 @@ export class ReservaFormComponent {
         fecha_fin_contrato: this.reservaForm.value.fechaSalida,
         contacto_reserva: this.reservaForm.value.contacto,
       };
-
-      // Llamar al método crearReserva del ApiService para enviar la reserva al servidor
-      this.apiService.crearReserva(nuevaReserva).subscribe(
-        (reservaCreada) => {
-          // Lógica adicional si es necesario
-          console.log('Reserva creada:', reservaCreada);
-
-          // Emitir el evento de reserva realizada
-          this.reservaRealizada.emit(reservaCreada);
-
-          // Restablecer el formulario después de la reserva
-          this.reservaForm.reset();
-          this.modal.dismissAll();
-        },
-        (error) => {
-          console.error('Error al crear la reserva:', error);
-          // Manejar el error según sea necesario
-        }
-      );
+      this.reservaForm.reset();
+      this.modal.dismissAll();
     }
   }
 }

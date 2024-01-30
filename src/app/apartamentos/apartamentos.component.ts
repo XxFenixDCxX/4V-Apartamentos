@@ -45,9 +45,9 @@ export class ApartamentosComponent implements OnInit {
     const fechaSalida = this.parsearFecha(ultimaReserva.fecha_fin_contrato);
     const hoy = new Date();
 
-    const fechaFiltro = this.filtroFecha ? this.parsearFecha(this.filtroFecha) : null;
+    const fechaFiltro = this.filtroFecha ? this.parsearFecha(this.filtroFecha) : new Date();
 
-    return (hoy < fechaEntrada || hoy > fechaSalida) && (fechaFiltro ? this.sonFechasIguales(hoy, fechaFiltro) : true);
+    return (fechaFiltro < fechaEntrada || fechaFiltro > fechaSalida);
   }
 
   sonFechasIguales(fecha1: Date, fecha2: Date): boolean {
@@ -67,12 +67,11 @@ export class ApartamentosComponent implements OnInit {
 
         if (apartamento.ultima_reserva && apartamento.ultima_reserva.fecha_fin_contrato) {
           const fechaFinContrato = this.parsearFecha(apartamento.ultima_reserva.fecha_fin_contrato);
-          return fechaFinContrato < fechaSeleccionada; // Corregir la comparación
+          return fechaFinContrato < fechaSeleccionada;
         }
 
-        return true; // Cambiar a true para mostrar los que no tienen reserva
+        return true;
       } else {
-        // Mostrar todos los apartamentos
         return true;
       }
     });

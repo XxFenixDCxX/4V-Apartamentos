@@ -1,1 +1,18 @@
-<p>contacto works!</p>
+<!-- contacto-form.component.html -->
+<form [formGroup]="contactoForm">
+  <div class="form-group">
+    <label for="emailRespuesta">Email de Respuesta:</label>
+    <input type="email" class="form-control" id="emailRespuesta" formControlName="emailRespuesta" required>
+  </div>
+  <div class="form-group">
+    <label for="apartamento">Apartamento:</label>
+    <select class="form-control" id="apartamento" formControlName="apartamento" required>
+      <option *ngFor="let apartamento of apartamentos" [value]="apartamento.titulo">{{apartamento.titulo}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="pregunta">Pregunta:</label>
+    <textarea class="form-control" id="pregunta" formControlName="pregunta" rows="4" required></textarea>
+  </div>
+  <button type="button" class="btn btn-primary" (click)="generarLinkMailto()">Generar Link Mailto</button>
+</form>

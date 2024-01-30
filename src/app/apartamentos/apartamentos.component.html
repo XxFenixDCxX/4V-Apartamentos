@@ -8,8 +8,8 @@
       <div class="col-12">
         <div class="input-group">
           <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="model" ngbDatepicker
-            #d="ngbDatepicker" />
-          <button class="btn btn-outline-secondary fas fa-calendar" (click)="d.toggle(); filtroLibres = false; filtroFecha = model ? model.year + '-' + model.month + '-' + model.day : null" type="button"></button>
+            #d="ngbDatepicker" (ngModelChange)="filtroFecha = model ? model.year + '-' + model.month + '-' + model.day : null"/>
+          <button class="btn btn-outline-secondary fas fa-calendar" (click)="d.toggle(); filtroLibres = false;" type="button"></button>
         </div>
       </div>
     </form>
