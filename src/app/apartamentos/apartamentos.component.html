@@ -1,1 +1,49 @@
-<p>apartamentos works!</p>
+<div class="container">
+  <div class="mb-3 d-flex justify-content-between">
+    <button type="button" class="btn btn-outline-primary btn-rounded"
+            [class.btn-primary]="filtroLibres" [class.btn-outline-primary]="!filtroLibres" (click)="filtroLibres = true; filtroFecha = null">Libres</button>
+    <button type="button" class="btn btn-rounded"
+            [class.btn-primary]="!filtroLibres" [class.btn-outline-primary]="filtroLibres" (click)="filtroLibres = false; filtroFecha = null">Todos</button>
+    <form class="row row-cols-sm-auto">
+      <div class="col-12">
+        <div class="input-group">
+          <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="model" ngbDatepicker
+            #d="ngbDatepicker" />
+          <button class="btn btn-outline-secondary fas fa-calendar" (click)="d.toggle(); filtroLibres = false; filtroFecha = model ? model.year + '-' + model.month + '-' + model.day : null" type="button"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row">
+    <div *ngFor="let apartamento of filtrarApartamentos()" class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">{{ apartamento.titulo }}</h2>
+          <p class="card-text">{{ apartamento.description }}</p>
+          <p class="card-text">Precio: ${{ apartamento.precio }}</p>
+
+          <!-- Carrusel de imágenes de ng-bootstrap -->
+          <ngb-carousel class="custom-carousel">
+            <ng-template ngbSlide *ngFor="let foto of apartamento.fotos">
+              <div class="picsum-img-wrapper">
+                <img [src]="foto.url" alt="Foto del apartamento {{foto.id}}" class="d-block w-100">
+              </div>
+            </ng-template>
+          </ngb-carousel>
+
+          <!-- Verificación de reserva -->
+          <div class="text-center">
+            <button *ngIf="!apartamento.ultima_reserva || isDisponibleHoy(apartamento.ultima_reserva)"
+                    class="btn btn-primary mt-3">Reservar</button>
+          </div>
+
+          <!-- Fecha de salida o "Hasta" -->
+          <h5 class="card-text text-center" *ngIf="apartamento.ultima_reserva?.fecha_fin_contrato !== null">
+            {{ apartamento.ultima_reserva ? 'Hasta: ' + apartamento.ultima_reserva.fecha_fin_contrato : 'Fecha de salida:' }}
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

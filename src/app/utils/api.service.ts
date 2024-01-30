@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Reserva } from './../class/reserva';
 import { Apartamento } from './../class/apartamento';
+import { Foto } from '../class/foto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'https://65b797f446324d531d550097.mockapi.io';
+  private apiUrl = 'http://65b797f446324d531d550097.mockapi.io';
 
   constructor(private http: HttpClient) { }
 
@@ -18,7 +19,7 @@ export class ApiService {
       map((reservasAPI: any[]) => {
         return reservasAPI.map(reserva => new Reserva(
           reserva.id,
-          reserva.apatamento_id,
+          reserva.apartmento_id,
           reserva.fecha_entrada,
           reserva.fecha_fin_contrato,
           reserva.contacto_reserva
@@ -28,23 +29,29 @@ export class ApiService {
   }
 
   obtenerApartamentos(): Observable<Apartamento[]> {
-    return this.http.get<Apartamento[]>(`${this.apiUrl}/apartamento`).pipe(
+    return this.http.get<Apartamento[]>(`${this.apiUrl}/apartamentos`).pipe(
       map((apartamentosAPI: any[]) => {
-        return apartamentosAPI.map(apartamento => new Apartamento(
-          apartamento.id,
-          apartamento.titulo,
-          apartamento.description,
-          apartamento.precio,
-          apartamento.fotos,
-          new Reserva(
-            apartamento.ultima_reserva.id,
-            apartamento.ultima_reserva.apatamento_id,
-            apartamento.ultima_reserva.fecha_entrada,
-            apartamento.ultima_reserva.fecha_fin_contrato,
-            apartamento.ultima_reserva.contacto_reserva
-          )
-        ));
+        return apartamentosAPI.map(apartamento => {
+          const ultimaReserva = apartamento.ultima_reserva || {};
+          const fotos: Foto[] = (apartamento.fotos || []).map((foto: any) => new Foto(foto.id, foto.url));
+          return new Apartamento(
+            apartamento.id,
+            apartamento.titulo,
+            apartamento.description,
+            apartamento.direccion,
+            apartamento.precio,
+            fotos,
+            new Reserva(
+              ultimaReserva.id || null,
+              apartamento.id,
+              ultimaReserva.fecha_entrada || null,
+              ultimaReserva.fecha_fin_contrato || null,
+              ultimaReserva.contacto_reserva || null
+            )
+          );
+        });
       })
     );
   }
+
 }
